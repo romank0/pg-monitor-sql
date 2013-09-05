@@ -204,7 +204,7 @@ ORDER BY
 
 --Reset statistics
 
-pg_stat_reset() resets all statistics just for the current database. 
+select pg_stat_reset(); -- resets all statistics just for the current database. 
 pg_stat_reset_shared('bgwriter') can be used to reset pg_stat_bgwriter. 
 pg_stat_reset_single_table_counters() and pg_stat_reset_single_function_counters() can be used to reset individual table, index, or function statistics.
 
