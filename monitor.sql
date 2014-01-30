@@ -286,6 +286,11 @@ GROUP BY c.oid,c.relname
 ORDER BY 3 DESC
 LIMIT 10;
 
+-- running sessions
+select * from pg_stat_activity
+
+-- locks 
+select * from pg_locks
 
 -- unix
 
