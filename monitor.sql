@@ -261,6 +261,7 @@ FROM
 WHERE (checkpoints_timed + checkpoints_req) > 0;
 
 -- Buffer cache
+create extension "pg_buffercache";
 
 -- Summary by usage count
 
