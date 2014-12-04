@@ -1,25 +1,3 @@
--- Overview
-
-SELECT
-  d.datname,
-  pg_size_pretty(pg_database_size(d.datname)) as size,
-  numbackends,
-  xact_commit,
-  xact_rollback,
-  blks_read,
-  blks_hit,
-  blks_hit::float / ( blks_hit + blks_read ) * 100.0 as cache_hit_ratio,
-  tup_fetched,
-  tup_returned,
-  tup_inserted,
-  tup_updated,
-  tup_deleted
-FROM
-  pg_stat_database d
-RIGHT JOIN
-  pg_database on d.datname = pg_database.datname
-WHERE
-  not datistemplate and d.datname != 'postgres';
 
 SELECT
   d.datname::text,
