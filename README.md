@@ -3,6 +3,8 @@ pg-monitor-sql
 
 PostrgreSQL monitoring queries
 
+[Kill backend](#kill)
+
 Overview
 -------
 
@@ -331,6 +333,11 @@ LIMIT 10;
 ##Running sessions
 ```
 select * from pg_stat_activity
+```
+
+## <a name="kill"></a>Kill backend
+```
+select pg_terminate_backend(<pid>)
 ```
 
 ##Locks 
