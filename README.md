@@ -4,6 +4,7 @@ pg-monitor-sql
 PostrgreSQL monitoring queries
 
 [Kill backend](#kill)
+
 [Reload config](#reload)
 
 Overview
