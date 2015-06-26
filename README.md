@@ -4,6 +4,7 @@ pg-monitor-sql
 PostrgreSQL monitoring queries
 
 [Kill backend](#kill)
+[Reload config](#reload)
 
 Overview
 -------
@@ -350,6 +351,11 @@ select * from pg_stat_activity
 ## <a name="kill"></a>Kill backend
 ```
 select pg_terminate_backend(<pid>)
+```
+
+## <a name="reload"></a>Reload config
+```
+SELECT pg_reload_conf();
 ```
 
 ##Locks 
