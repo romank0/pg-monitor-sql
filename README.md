@@ -361,6 +361,7 @@ ORDER BY query_start desc;
 ## <a name="kill"></a>Kill backend
 Cancel query:
 
+```
 SELECT pg_cancel_backend(procpid);
 ```
 
