@@ -33,7 +33,7 @@ WHERE
   not datistemplate and d.datname != 'postgres';
 ```
 
-Cache usage
+### Cache usage
 
 ```
 SELECT
@@ -47,7 +47,7 @@ WHERE
  not datistemplate and d.datname != 'postgres';
 ```
 
-Sequential vs index scans
+### Sequential vs index scans
 
 ```
 SELECT
@@ -57,7 +57,7 @@ SELECT
 ```
 
 
-Statements distribution
+### Statements distribution
 ```
 SELECT
  d.datname::text,
@@ -92,7 +92,7 @@ where
 ```
 
 
-Size with toast
+### Size with toast
 
 ```
 -- This seems wrong, not MECE, because it adds index size to tables, but then shows indexes.
@@ -152,7 +152,7 @@ LIMIT
   100;
 ```
 
-table and index hit %, hot tables (top 50)
+### Table and index hit %, hot tables (top 50)
 
 ```
 SELECT
@@ -183,13 +183,11 @@ limit
   100;
 ```
 
-Read activity by table (top 50)
+### Read activity by table (top 50)
 
-  /*
-    break down total read activity in the database on a per-table basis.
-    that's not completely fair because the size of the reads isn't considered,
-    but it does give a rough idea where activity is happening.
-  */
+Break down total read activity in the database on a per-table basis.
+Tthat's not completely fair because the size of the reads isn't considered,
+but it does give a rough idea where activity is happening.
 
 ```
 SELECT
@@ -213,7 +211,9 @@ limit
   50;
 ```
 
-Index usage counts - rank how much all indexes are used, looking for unused ones
+### Index usage counts
+
+Rank how much all indexes are used, looking for unused ones.
 
 ```
 SELECT
@@ -231,23 +231,24 @@ WHERE
   indisunique is false
 ORDER BY
   idx_scan desc, pg_relation_size(i.indexrelid) desc;
-
 ```
 
-##Statistics
+## Statistics
 
 See http://www.postgresql.org/docs/9.2/static/monitoring-stats.html
 
-###Reset statistics for current database
+### Reset statistics for current database
+
 ```
 select pg_stat_reset(); -- resets all statistics just for the current database. 
 ```
 
 `pg_stat_reset_shared('bgwriter')` can be used to reset `pg_stat_bgwriter`. 
+
 `pg_stat_reset_single_table_counters()` and `pg_stat_reset_single_function_counters()` can be used to reset individual table, index, or function statistics.
 
 
-###Buffer, background writer, and checkpoint activity
+### Buffer, background writer, and checkpoint activity
 
 ```
 CREATE VIEW pg_stat_bgwriter AS
@@ -295,16 +296,15 @@ FROM
     ON two.now > one.now
 ) bgwriter_diff
 WHERE (checkpoints_timed + checkpoints_req) > 0;
-
 ```
 
-##Buffer cache
+## Buffer cache
 
 ```
 create extension "pg_buffercache";
 ```
 
-###Summary by usage count
+### Summary by usage count
 
 ```
 SELECT usagecount,count(*),isdirty
@@ -313,7 +313,7 @@ GROUP BY isdirty,usagecount
 ORDER BY isdirty,usagecount;
 ```
 
-Buffer usage by table
+### Buffer usage by table
 ```
 SELECT c.relname, count(*) AS buffers
              FROM pg_buffercache b INNER JOIN pg_class c
@@ -325,7 +325,7 @@ SELECT c.relname, count(*) AS buffers
              LIMIT 10;
 ```
 
-###Buffer content summary
+### Buffer content summary
 ```
 SELECT 
     c.relname,
@@ -344,12 +344,27 @@ ORDER BY 3 DESC
 LIMIT 10;
 ```
 
-##Running sessions
+## Running sessions
+
 ```
 select * from pg_stat_activity
 ```
 
+## Running queries
+
+```
+SELECT pid, age(clock_timestamp(), query_start), usename, xact_start, wait_event, wait_event_type, state, query FROM pg_stat_activity
+WHERE coalesce(state, '') != 'idle' AND query NOT ILIKE '%pg_stat_activity%'
+ORDER BY query_start desc;
+```
+
 ## <a name="kill"></a>Kill backend
+Cancel query:
+
+SELECT pg_cancel_backend(procpid);
+```
+
+Kill:
 ```
 select pg_terminate_backend(<pid>)
 ```
@@ -359,19 +374,19 @@ select pg_terminate_backend(<pid>)
 SELECT pg_reload_conf();
 ```
 
-##Locks 
+## Locks 
 ```
 select * from pg_locks
 ```
 
-#System level monitoring
+# System level monitoring
 
-##Overall
+## Overall
 ```
 vmstat 1
 ```
 
-##IO
+## IO
 ```
 iostat -k 2
 ```
