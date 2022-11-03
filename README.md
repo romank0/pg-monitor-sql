@@ -175,6 +175,15 @@ FROM (
 ) AS pretty_sizes;
 ```
 
+### Indexes sizes
+
+```
+select pg_size_pretty(pg_table_size(indexrelid)), indexrelname 
+from pg_stat_all_indexes
+order by pg_table_size(indexrelid)
+desc limit 20;
+```
+
 
 ### Table and index hit %, hot tables (top 50)
 
