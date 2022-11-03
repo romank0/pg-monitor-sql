@@ -178,7 +178,11 @@ FROM (
 ### Indexes sizes
 
 ```
-select pg_size_pretty(pg_table_size(indexrelid)), indexrelname 
+select 
+    pg_size_pretty(pg_table_size(indexrelid)),
+    indexrelname,
+    idx_tup_read,
+    idx_tup_fetch 
 from pg_stat_all_indexes
 order by pg_table_size(indexrelid)
 desc limit 20;
