@@ -152,6 +152,30 @@ LIMIT
   100;
 ```
 
+### Table sizes
+
+```
+SELECT
+    table_name,
+    pg_size_pretty(table_size) AS table_size,
+    pg_size_pretty(indexes_size) AS indexes_size,
+    pg_size_pretty(total_size) AS total_size
+FROM (
+    SELECT
+        table_name,
+        pg_table_size(table_name) AS table_size,
+        pg_indexes_size(table_name) AS indexes_size,
+        pg_total_relation_size(table_name) AS total_size
+    FROM (
+        SELECT ('"' || table_schema || '"."' || table_name || '"') AS table_name
+        FROM information_schema.tables
+    ) AS all_tables
+    ORDER BY total_size DESC
+    LIMIT 10
+) AS pretty_sizes;
+```
+
+
 ### Table and index hit %, hot tables (top 50)
 
 ```
@@ -392,3 +416,16 @@ vmstat 1
 iostat -k 2
 ```
 
+# Queries
+
+## Get table indices
+
+```
+select tablename,indexname,tablespace,indexdef  from pg_indexes where tablename = ''
+```
+
+## Get table columns
+
+```
+select column_name, data_type, character_maximum_length, column_default, is_nullable from INFORMATION_SCHEMA.COLUMNS where table_name = ''
+```
