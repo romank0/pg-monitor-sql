@@ -175,6 +175,16 @@ FROM (
 ) AS pretty_sizes;
 ```
 
+### Table records estimation based on statistics
+
+This is useful when the table is exclusively locked for example during the DDL
+that modifies its structure:
+
+
+```
+select * from pg_stat_all_tables where relname = 'a';
+```
+
 ### Indexes sizes
 
 ```
