@@ -188,11 +188,12 @@ select * from pg_stat_all_tables where relname = 'a';
 ### Indexes sizes
 
 ```
-select 
+select
     pg_size_pretty(pg_table_size(indexrelid)),
-    indexrelname,
+    indexrelname index_name,
+    relname table_name,
     idx_tup_read,
-    idx_tup_fetch 
+    idx_tup_fetch
 from pg_stat_all_indexes
 order by pg_table_size(indexrelid)
 desc limit 20;
