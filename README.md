@@ -10,6 +10,7 @@ PostrgreSQL monitoring queries
 Overview
 -------
 
+Databases sizes & caches hits
 ```
 SELECT
   d.datname,
@@ -31,6 +32,8 @@ RIGHT JOIN
   pg_database on d.datname = pg_database.datname
 WHERE
   not datistemplate and d.datname != 'postgres';
+order by pg_database_size(d.datname) desc
+limit 30
 ```
 
 ### Cache usage
