@@ -397,6 +397,9 @@ LIMIT 10;
 
 ## Page Inspection
 
+[Description](https://stackoverflow.com/a/39204667/2231972) of how MVCC works
+in postgres.
+
 [pageinspect](https://www.postgresql.org/docs/current/pageinspect.html)
 
 ```
