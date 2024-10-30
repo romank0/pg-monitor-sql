@@ -286,7 +286,7 @@ ORDER BY
 
 ## Statistics
 
-See http://www.postgresql.org/docs/9.2/static/monitoring-stats.html
+See https://www.postgresql.org/docs/current/monitoring-stats.html
 
 ### Reset statistics for current database
 
@@ -393,6 +393,17 @@ FROM pg_class c
 GROUP BY c.oid,c.relname
 ORDER BY 3 DESC
 LIMIT 10;
+```
+
+## Page Inspection
+
+[pageinspect](https://www.postgresql.org/docs/current/pageinspect.html)
+
+```
+SELECT t_ctid, t_xmin, t_xmax, raw_flags, combined_flags
+FROM heap_page_items(get_raw_page('table', 0)),
+    LATERAL heap_tuple_infomask_flags(t_infomask, t_infomask2)
+WHERE t_infomask IS NOT NULL OR t_infomask2 IS NOT NULL;
 ```
 
 ## Running sessions
