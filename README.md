@@ -415,8 +415,11 @@ select * from pg_stat_activity
 ## Running queries
 
 ```
-SELECT pid, age(clock_timestamp(), query_start), usename, xact_start, wait_event, wait_event_type, state, query FROM pg_stat_activity
-WHERE coalesce(state, '') != 'idle' AND query NOT ILIKE '%pg_stat_activity%'
+SELECT pid, age(clock_timestamp(), query_start), usename, xact_start, wait_event, wait_event_type, state, query 
+FROM pg_stat_activity
+WHERE 
+    coalesce(state, '') != 'idle'
+    AND query NOT ILIKE '%pg_stat_activity%'
 ORDER BY query_start desc;
 ```
 
@@ -456,14 +459,26 @@ iostat -k 2
 
 # Queries
 
+## Is index valid?
+
+```
+SELECT indisvalid
+FROM pg_index
+WHERE indexrelid = 'index_name'::regclass
+```
+
 ## Get table indices
 
 ```
-select tablename,indexname,tablespace,indexdef  from pg_indexes where tablename = ''
+select tablename,indexname,tablespace,indexdef  
+from pg_indexes 
+where tablename = ''
 ```
 
 ## Get table columns
 
 ```
-select column_name, data_type, character_maximum_length, column_default, is_nullable from INFORMATION_SCHEMA.COLUMNS where table_name = ''
+select column_name, data_type, character_maximum_length, column_default, is_nullable 
+from INFORMATION_SCHEMA.COLUMNS 
+where table_name = ''
 ```
