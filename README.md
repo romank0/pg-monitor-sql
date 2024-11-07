@@ -188,6 +188,13 @@ that modifies its structure:
 select * from pg_stat_all_tables where relname = 'a';
 ```
 
+
+### Last analyze, autoanalyze, vacuum etc time
+
+```
+select * from pg_stat_all_tables where relname = 'a';
+```
+
 ### Indexes sizes
 
 ```
