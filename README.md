@@ -195,6 +195,39 @@ select * from pg_stat_all_tables where relname = 'a';
 select * from pg_stat_all_tables where relname = 'a';
 ```
 
+### Statistics targets for Analyze
+
+Check staticstics target for table columns:
+
+```
+SELECT
+    c.relname AS table_name,
+    a.attname AS column_name,
+    a.attstattarget AS statistics_target
+FROM
+    pg_class c
+JOIN
+    pg_attribute a ON c.oid = a.attrelid
+WHERE
+    c.relname = 'table_name'      -- Replace with your table name
+    AND c.relkind = 'r'           -- Only include regular tables
+    AND a.attnum > 0              -- Exclude system columns
+ORDER BY
+    a.attnum;
+```
+
+`-1` in the output of the query means the default setting is used. The settings
+can be checked with `show default_statistics_target;`.
+
+Change statistics target for a column:
+
+```
+ALTER TABLE table_name ALTER COLUMN column_name SET STATISTICS target_value;
+```
+
+To drop the custom value use `-1`.
+
+
 ### Indexes sizes
 
 ```
