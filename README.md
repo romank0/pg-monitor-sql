@@ -20,7 +20,11 @@ SELECT
   xact_rollback,
   blks_read,
   blks_hit,
-  blks_hit::float / ( blks_hit + blks_read ) * 100.0 as cache_hit_ratio,
+  case blks_hit + blks_read
+    when 0 then null
+    else blks_hit::float / ( blks_hit + blks_read ) * 100.0
+  end
+  as cache_hit_ratio,
   tup_fetched,
   tup_returned,
   tup_inserted,
@@ -31,7 +35,7 @@ FROM
 RIGHT JOIN
   pg_database on d.datname = pg_database.datname
 WHERE
-  not datistemplate and d.datname != 'postgres';
+  not datistemplate and d.datname != 'postgres'
 order by pg_database_size(d.datname) desc
 limit 30
 ```
