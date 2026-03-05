@@ -514,6 +514,25 @@ FROM pg_index
 WHERE indexrelid = 'index_name'::regclass
 ```
 
+## What is concurrent index creation status?
+
+```
+  SELECT
+    pid,
+    datname,
+    relid::regclass AS table,
+    index_relid::regclass AS index,
+    command,
+    phase,
+    lockers_total,
+    lockers_done,
+    blocks_total,
+    blocks_done,
+    tuples_total,
+    tuples_done
+  FROM pg_stat_progress_create_index;
+```
+
 ## Get table indices
 
 ```
