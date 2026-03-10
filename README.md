@@ -544,7 +544,66 @@ where tablename = ''
 ## Get table columns
 
 ```
-select column_name, data_type, character_maximum_length, column_default, is_nullable 
-from INFORMATION_SCHEMA.COLUMNS 
+select column_name, data_type, character_maximum_length, column_default, is_nullable
+from INFORMATION_SCHEMA.COLUMNS
 where table_name = ''
 ```
+
+## Portable statistics for query plan testing (PostgreSQL 18+)
+
+PostgreSQL 18 added `pg_restore_relation_stats` and `pg_restore_attribute_stats`
+functions that write optimizer statistics directly into catalog tables. Combined
+with `pg_dump --statistics-only`, this lets you export production statistics and
+inject them into a test database to get production query plans without production
+data.
+
+### Dump and restore workflow
+
+```
+# dump schema and statistics from production
+pg_dump --schema-only -d production_db > schema.sql
+pg_dump --statistics-only -d production_db > stats.sql
+
+# create test database and load schema + statistics
+createdb test_db
+psql -d test_db -f schema.sql
+psql -d test_db -f stats.sql
+
+# query plans now reflect production statistics
+psql -d test_db -c "EXPLAIN SELECT ..."
+```
+
+The `--statistics-only` dump is plain SQL (series of `pg_restore_relation_stats`
+and `pg_restore_attribute_stats` calls). Typically under 1MB even for hundreds of
+tables.
+
+### pg_dump statistics flags
+
+Flag | Effect
+--- | ---
+`--statistics` | include statistics in the dump
+`--statistics-only` | dump only statistics, no schema or data
+`--no-statistics` | exclude statistics from the dump
+
+### Prevent autovacuum from overwriting injected statistics
+
+```
+ALTER TABLE table_name SET (autovacuum_enabled = false);
+
+-- or set the threshold high enough that it never triggers
+ALTER TABLE table_name SET (autovacuum_analyze_threshold = 2147483647);
+```
+
+### Security
+
+The restore functions require the `MAINTAIN` privilege (same as `ANALYZE`).
+
+```
+GRANT pg_maintain TO ci_service_account;
+```
+
+### Limitations
+
+The planner checks actual file size on disk, so `relpages` injection has limited
+effect unless local data volume is comparable. Extended statistics
+(`CREATE STATISTICS`) are not portable until PostgreSQL 19.
